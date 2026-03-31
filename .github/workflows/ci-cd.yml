@@ -83,6 +83,9 @@ jobs:
 # === ЕТАП 2: БЕЗПЕРЕРВНЕ РОЗГОРТАННЯ (CD) ===
   publish:
     needs: test-and-build # Запускається ТІЛЬКИ якщо job 'test' завершився успішно
+    permissions:
+      contents: read
+      packages: write
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev' # Пушимо образи тільки з гілки dev
     runs-on: ubuntu-latest
     steps:
