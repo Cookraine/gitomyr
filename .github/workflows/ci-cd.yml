@@ -103,8 +103,9 @@ jobs:
         id: prep
         run: |
           # Беремо назву репозиторію і переводимо в нижній регістр засобами Bash
-          REPO_NAME="ghcr.io/${{ github.repository }}"
-          echo "image=gitomyr-app" >> $GITHUB_OUTPUT
+          OWNER="${{ github.repository_owner }}"
+          IMAGE_NAME="ghcr.io/${OWNER,,}/gitomyr-app"
+          echo "image=${IMAGE_NAME}" >> $GITHUB_OUTPUT
 
       - name: 🐳 Build and Push App Image
         uses: docker/build-push-action@v5
