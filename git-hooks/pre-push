@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echo "⏳ Запуск PHPUnit тестів..."
+
+if docker ps --format '{{.Names}}' | grep -q "^gitomyr.app$"; then
+    docker exec gitomyr.app php artisan test
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Помилка: Тести впали! Пуш скасовано."
+        exit 1
+    fi
+else
+    echo "❌ КРИТИЧНО: Контейнер gitomyr.app не запущено."
+    echo "💡 Підніми середовище (docker-compose up -d), щоб прогнати тести перед пушем."
+    exit 1
+fi
+
+echo "✅ Усі тести пройдені. Відправляємо зміни..."
+exit 0

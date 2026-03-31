@@ -1,0 +1,20 @@
+#!/bin/bash
+
+echo "⏳ Запуск перевірки стилю коду (Laravel Pint)..."
+
+# Перевіряємо, чи працює контейнер app
+if docker ps --format '{{.Names}}' | grep -q "^gitomyr.app$"; then
+    # Запускаємо Pint у режимі перевірки (--test)
+    docker exec gitomyr.app ./vendor/bin/pint --test
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Помилка: Код не відповідає стандартам стилю."
+        echo "💡 Підказка: Виконай 'docker exec gitomyr.app ./vendor/bin/pint', щоб автоматично виправити помилки."
+        exit 1
+    fi
+else
+    echo "⚠️ Контейнер gitomyr.app не запущено. Пропускаємо перевірку стилю."
+fi
+
+echo "✅ Pre-commit перевірка успішно пройдена!"
+exit 0

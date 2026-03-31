@@ -1,0 +1,15 @@
+#!/bin/bash
+
+COMMIT_MSG_FILE=$1
+MSG=$(cat "$COMMIT_MSG_FILE")
+PATTERN="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?: .{5,}$"
+
+if ! [[ "$MSG" =~ $PATTERN ]]; then
+    echo "❌ Помилка: Невірний формат повідомлення коміту!"
+    echo "💡 Використовуй Conventional Commits. Приклади:"
+    echo "  feat: додати авторизацію через React"
+    echo "  fix(db): виправити відсутність таблиці sessions"
+    exit 1
+fi
+
+exit 0
