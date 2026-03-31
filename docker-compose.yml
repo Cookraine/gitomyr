@@ -22,7 +22,7 @@ services:
       dockerfile: docker/php/Dockerfile
     restart: always
     volumes:
-      - ${APP_PATH}:/var/www/html
+      - ${APP_PATH}:/var/www/html:Z # для уникнення проблем із SELinux (Fedora/RHEL)
     environment:
       DB_HOST: ${DB_HOST}
       DB_DATABASE: ${DB_DATABASE}
