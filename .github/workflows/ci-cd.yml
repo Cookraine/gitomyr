@@ -96,11 +96,14 @@ jobs:
           username: ${{ github.actor }} # Твій логін на GitHub
           password: ${{ secrets.GITHUB_TOKEN }} # Автоматичний токен (нічого створювати не треба)
 
+      - name: 🏷️ Lowercase Registry Name
+        run: |
+          echo "IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/gitomyr-app" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+
       - name: 🐳 Build and Push App Image
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: docker/php/Dockerfile
+          file: ./docker/php/Dockerfile
           push: true
-          # Формуємо назву: ghcr.io/твій-логін/gitomyr-app:latest
-          tags: ghcr.io/${{ github.repository_owner }}/gitomyr-app:latest
+          tags: ${{ env.IMAGE_NAME }}:latest
