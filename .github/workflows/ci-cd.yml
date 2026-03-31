@@ -96,9 +96,12 @@ jobs:
           username: ${{ github.actor }} # Твій логін на GitHub
           password: ${{ secrets.GITHUB_TOKEN }} # Автоматичний токен (нічого створювати не треба)
 
-      - name: 🏷️ Lowercase Registry Name
+      - name: 🏷️ Prepare Docker Tag
+        id: prep
         run: |
-          echo "IMAGE_NAME=ghcr.io/${{ github.repository }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+          # Беремо назву репозиторію і переводимо в нижній регістр засобами Bash
+          REPO_NAME="ghcr.io/${{ github.repository }}"
+          echo "image=${REPO_NAME,,}" >> $GITHUB_OUTPUT
 
       - name: 🐳 Build and Push App Image
         uses: docker/build-push-action@v5
@@ -106,4 +109,5 @@ jobs:
           context: .
           file: ./docker/php/Dockerfile
           push: true
-          tags: ${{ env.IMAGE_NAME }}:latest
+          # Використовуємо результат попереднього кроку через 'steps.prep.outputs'
+          tags: ${{ steps.prep.outputs.image }}:latest
