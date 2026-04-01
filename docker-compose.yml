@@ -1,0 +1,48 @@
+networks:
+  default:
+    name: gitomyr.network
+
+services:
+  web:
+    container_name: gitomyr.web
+    image: nginx:1.29-trixie
+    restart: always
+    env_file:
+    - .env
+    ports:
+      - "${APP_HTTP}:80"
+    volumes:
+      - ${APP_PATH}:/var/www/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+
+  app:
+    container_name: gitomyr.app
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    restart: always
+    volumes:
+      - ${APP_PATH}:/var/www/html:Z # для уникнення проблем із SELinux (Fedora/RHEL)
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - db
+
+  db:
+    container_name: gitomyr.db
+    image: mariadb:10.11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - gitomyr.db.data:/var/lib/mysql
+
+volumes:
+  gitomyr.db.data:
+    name: gitomyr.db.data
